@@ -21,11 +21,23 @@ let api = Axios.create({
 
 export default new Vuex.Store({
   state: {
-    user: {}
+    user: {},
+    userKeep: [],
+    allKeep: [],
+    vault: []
   },
   mutations: {
     setUser(state, user) {
       state.user = user
+    },
+    setUserKeep(state, userKeep) {
+      state.userKeep = userKeep
+    },
+    setAllKeep(state, allKeep) {
+      state.allKeep = allKeep
+    },
+    setVault(state, vault) {
+      state.vault = vault
     }
   },
   actions: {
@@ -58,6 +70,49 @@ export default new Vuex.Store({
         .catch(e => {
           console.log('Login Failed')
         })
-    }
+    },
+    logout({ commit, dispatch }, creds) {
+      auth.delete('login', creds)
+        .then(res => {
+          commit('setUser', {})
+          router.push({ name: 'login' })
+        })
+        .catch(e => {
+          console.log('Logout Failed')
+        })
+    },
+    createKeep({ commit, dispatch }, data) {
+      api.post('/keep', data)
+        .then(res => {
+          // console.log(res.data);
+          dispatch('getAllKeep')
+        })
+    },
+    getAllKeep({ commit, dispatch }) {
+      api.get('/keep')
+        .then(res => {
+          // console.log("Keeps success")
+          commit('setAllKeep', res.data)
+        })
+    },
+    getUserKeep({ commit, dispatch }) {
+      api.get('/keep')
+        .then(res => {
+          // console.log("Keeps success")
+          commit('setUserKeep', res.data)
+        })
+    },
+    deleteKeep({ commit, dispatch }, data) {
+      api.delete('/keep' + data)
+        .then(res => {
+          dispatch('getUserKeep')
+        })
+    },
+
+
+
+
+
+
   }
 })
