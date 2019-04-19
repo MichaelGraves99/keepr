@@ -26,11 +26,12 @@ namespace keepr.Models
     public string Name { get; set; }
     [Required]
     public string Description { get; set; }
-    [Required]
+
     public string UserId { get; set; }
 
     public string Img { get; set; }
-    public int IsPrivate { get; set; }
+
+    public bool IsPrivate { get; set; }
     public int Views { get; set; }
     public int Shares { get; set; }
     public int Keeps { get; set; }

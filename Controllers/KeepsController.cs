@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using keepr.Models;
 using keepr.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace keepr.Controllers
@@ -23,16 +24,18 @@ namespace keepr.Controllers
       return Ok(results);
     }
     //GetByUserId
-    [HttpGet("{userId}")]
-    public ActionResult<Keep> Get(string UserId)
+    [HttpGet("user")]
+    [Authorize]
+    public ActionResult<Keep> GetByUserId()
     {
-      IEnumerable<Keep> found = _kr.GetByUserId(UserId);
+      string userId = HttpContext.User.Identity.Name;
+      IEnumerable<Keep> found = _kr.GetByUserId(userId);
       if (found == null) { return BadRequest("No"); }
       return Ok(found);
     }
     //GetByVaultId
     [HttpGet("{vaultId}")]
-    public ActionResult<Keep> Get(int vaultId)
+    public ActionResult<Keep> GetByVaultId(int vaultId)
     {
       Keep found = _kr.GetByVaultId(vaultId);
       if (found == null) { return BadRequest("No"); }
@@ -49,8 +52,10 @@ namespace keepr.Controllers
 
     //Create
     [HttpPost]
+    [Authorize]
     public ActionResult<Keep> Create([FromBody] Keep nKeep)
     {
+      nKeep.UserId = HttpContext.User.Identity.Name;
       Keep newKeep = _kr.CreateKeep(nKeep);
       if (newKeep == null) { return BadRequest("No make new Keep"); }
       return Ok(newKeep);
@@ -67,6 +72,7 @@ namespace keepr.Controllers
 
     //Delete
     [HttpDelete("{id}")]
+
     public ActionResult<string> Delete(int id)
     {
       bool successful = _kr.Delete(id);

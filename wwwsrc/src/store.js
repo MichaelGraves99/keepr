@@ -22,22 +22,26 @@ let api = Axios.create({
 export default new Vuex.Store({
   state: {
     user: {},
-    userKeep: [],
-    allKeep: [],
-    vault: []
+    userKeeps: [],
+    keeps: [],
+    vaults: [],
+    vaultKeeps: []
   },
   mutations: {
     setUser(state, user) {
       state.user = user
     },
-    setUserKeep(state, userKeep) {
-      state.userKeep = userKeep
+    setUserKeeps(state, data) {
+      state.userKeeps = data
     },
-    setAllKeep(state, allKeep) {
-      state.allKeep = allKeep
+    setKeeps(state, data) {
+      state.keeps = data
     },
-    setVault(state, vault) {
-      state.vault = vault
+    setVaults(state, data) {
+      state.vaults = data
+    },
+    setVaultKeeps(state, data) {
+      state.vaultKeeps = data
     }
   },
   actions: {
@@ -71,8 +75,8 @@ export default new Vuex.Store({
           console.log('Login Failed')
         })
     },
-    logout({ commit, dispatch }, creds) {
-      auth.delete('login', creds)
+    logout({ commit, dispatch }) {
+      auth.delete('logout')
         .then(res => {
           commit('setUser', {})
           router.push({ name: 'login' })
@@ -81,38 +85,55 @@ export default new Vuex.Store({
           console.log('Logout Failed')
         })
     },
+    // Keeps
     createKeep({ commit, dispatch }, data) {
-      api.post('/keep', data)
+      api.post('keeps', data)
         .then(res => {
           // console.log(res.data);
-          dispatch('getAllKeep')
+          dispatch('getKeeps')
         })
     },
-    getAllKeep({ commit, dispatch }) {
-      api.get('/keep')
+    getKeeps({ commit, dispatch }) {
+      api.get('keeps')
         .then(res => {
           // console.log("Keeps success")
-          commit('setAllKeep', res.data)
+          commit('setKeeps', res.data)
         })
     },
-    getUserKeep({ commit, dispatch }) {
-      api.get('/keep')
+    getUserKeeps({ commit, dispatch, state }) {
+      api.get('keeps/user')
         .then(res => {
-          // console.log("Keeps success")
-          commit('setUserKeep', res.data)
-        })
+          // console.log("UserKeeps success")
+          commit('setUserKeeps', res.data)
+        }).catch(err => { console.log(err) })
     },
     deleteKeep({ commit, dispatch }, data) {
-      api.delete('/keep' + data)
+      api.delete('keeps' + data)
         .then(res => {
-          dispatch('getUserKeep')
+          dispatch('getKeeps')
         })
     },
-
-
-
-
-
-
+    // Vaults
+    getVaults({ commit, dispatch, state }) {
+      let userId = state.user.id
+      api.get('vaults', userId)
+        .then(res => {
+          // console.log("Vaults success")
+          commit('setVaults', res.data)
+        })
+    },
+    createVault({ commit, dispatch }, data) {
+      api.post('vaults', data)
+        .then(res => {
+          // console.log(res.data);
+          dispatch('getVaults')
+        })
+    },
+    deleteVault({ commit, dispatch }, data) {
+      api.delete('vaults/' + data)
+        .then(res => {
+          dispatch('getVaults')
+        })
+    }
   }
 })

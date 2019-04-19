@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using keepr.Models;
 using keepr.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace keepr.Controllers
@@ -14,27 +15,31 @@ namespace keepr.Controllers
     {
       _vr = vr;
     }
-    //GetAll
+    // //GetAll
+    // [HttpGet]
+    // public ActionResult<IEnumerable<Vault>> Get()
+    // {
+    //   IEnumerable<Vault> results = _vr.GetALL();
+    //   if (results == null) { return BadRequest(); }
+    //   return Ok(results);
+    // }
+
+    //GetByUserId
     [HttpGet]
-    public ActionResult<IEnumerable<Vault>> Get()
+    [Authorize]
+    public ActionResult<Vault> GetVaultById(int id)
     {
-      IEnumerable<Vault> results = _vr.GetALL();
-      if (results == null) { return BadRequest(); }
-      return Ok(results);
-    }
-    //GetById
-    [HttpGet("{id}")]
-    public ActionResult<Vault> Get(int id)
-    {
-      Vault found = _vr.GetById(id);
+      string userId = HttpContext.User.Identity.Name;
+      IEnumerable<Vault> found = _vr.GetVaultById(userId);
       if (found == null) { return BadRequest("No"); }
       return Ok(found);
     }
-
     //Create
     [HttpPost]
+    [Authorize]
     public ActionResult<Vault> Create([FromBody] Vault nVault)
     {
+      nVault.UserId = HttpContext.User.Identity.Name;
       Vault newVault = _vr.CreateVault(nVault);
       if (newVault == null) { return BadRequest("No make new Vault"); }
       return Ok(newVault);

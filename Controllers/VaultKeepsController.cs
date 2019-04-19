@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using keepr.Models;
 using keepr.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace keepr.Controllers
@@ -33,8 +34,10 @@ namespace keepr.Controllers
 
     //Create
     [HttpPost]
+    [Authorize]
     public ActionResult<VaultKeep> Create([FromBody] VaultKeep nVaultKeep)
     {
+      nVaultKeep.UserId = HttpContext.User.Identity.Name;
       VaultKeep newVaultKeep = _vkr.CreateVaultKeep(nVaultKeep);
       if (newVaultKeep == null) { return BadRequest("No make new VaultKeep"); }
       return Ok(newVaultKeep);
