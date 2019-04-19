@@ -16,18 +16,20 @@ namespace keepr.Controllers
       _vkr = vkr;
     }
     //GetAll
-    [HttpGet]
-    public ActionResult<IEnumerable<VaultKeep>> Get()
-    {
-      IEnumerable<VaultKeep> results = _vkr.GetALL();
-      if (results == null) { return BadRequest(); }
-      return Ok(results);
-    }
+    // [HttpGet]
+    // public ActionResult<IEnumerable<VaultKeep>> Get()
+    // {
+    //   IEnumerable<VaultKeep> results = _vkr.GetALL();
+    //   if (results == null) { return BadRequest(); }
+    //   return Ok(results);
+    // }
     //GetById
-    [HttpGet("{id}")]
-    public ActionResult<VaultKeep> Get(int id)
+    [HttpGet("{vaultId}")]
+    [Authorize]
+    public ActionResult<Keep> Get(int vaultId)
     {
-      VaultKeep found = _vkr.GetById(id);
+      string UserId = HttpContext.User.Identity.Name;
+      IEnumerable<Keep> found = _vkr.GetById(vaultId, UserId);
       if (found == null) { return BadRequest("No"); }
       return Ok(found);
     }

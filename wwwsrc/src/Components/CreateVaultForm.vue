@@ -27,7 +27,15 @@ export default {
     };
   },
   computed: {},
-  methods: {},
+  methods: {
+    createVault() {
+      this.$store.dispatch("createVault", this.newVault);
+      this.newVault = {
+        name: "",
+        description: ""
+      };
+    }
+  },
   components: {}
 };
 </script>

@@ -7,27 +7,42 @@
           <div class="card" style="width: 18rem;">
             <div class="card-body">
               <h5 class="card-title">{{vault.name}}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-              <a href="#" class="btn btn-primary">View This</a>
+              <button @click="deleteVault(vault.id)" class="btn btn-danger">Delete This</button>
+              <button @click="viewVault(vault.id)" class="btn btn-primary">View Vault</button>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <all-keeps :vaults="vaults" :keeps="vaultKeeps"></all-keeps>
   </div>
 </template>
 
 
 <script>
+import AllKeeps from "@/components/AllKeeps.vue";
 export default {
   name: "user-vaults",
   data() {
     return {};
   },
   props: ["vaults"],
-  computed: {},
-  methods: {},
-  components: {}
+  computed: {
+    vaultKeeps() {
+      return this.$store.state.vaultKeeps;
+    }
+  },
+  methods: {
+    deleteVault(id) {
+      this.$store.dispatch("deleteVault", id);
+    },
+    viewVault(vaultId) {
+      this.$store.dispatch("getVaultKeeps", vaultId);
+    }
+  },
+  components: {
+    AllKeeps
+  }
 };
 </script>
 

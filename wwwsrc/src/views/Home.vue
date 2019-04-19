@@ -23,7 +23,7 @@
       <create-vault-form v-if="buttonkeep"></create-vault-form>
     </div>
     <div>
-      <all-keeps v-if="!buttonkeep" :keeps="userKeeps"></all-keeps>
+      <all-keeps v-if="!buttonkeep" :keeps="userKeeps" :vaults="vaults"></all-keeps>
       <user-vaults v-if="buttonkeep" :vaults="vaults"></user-vaults>
     </div>
   </div>
